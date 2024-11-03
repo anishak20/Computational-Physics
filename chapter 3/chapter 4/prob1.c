@@ -13,6 +13,8 @@ float secant(float x);
 float newtonraphson(float x);
 
 
+
+
 void main(){
     float x,root,xm,f2;
     float xinc=0.5;
@@ -24,12 +26,10 @@ void main(){
         printf("%f\t%f\n",x,f(x));
 
     }
-    printf("\n Enter 1 for bisection, 2 for secant, 3 for newton raphson\n");
-    scanf("%d",&m);
-    
     printf("\n enter no of roots:");
     scanf("%d",&n);
-   
+    printf("\n Enter 1 for bisection, 2 for secant, 3 for newton raphson\n");
+    scanf("%d",&m);
     for(i=1;i<=n;i++){
         if(m==1){
             printf("\n enter x1:");
@@ -39,7 +39,7 @@ void main(){
             for(x=x1;x<=x2;x+=xinc){
             root=bisection(x);
         }
-        printf("root = %f\tf(x) = %f\t%f\t%f\n",root,f(root),z,acc);
+        printf("root = %f\tf(x) = %f\n",root,f(root));
         }
         else if(m==2)
 	{
@@ -48,14 +48,14 @@ void main(){
        printf("\n enter x2:");
        scanf("%f",&x2);
 	   root = secant(x);
-	  printf("root = %f\tf(x) = %f\t%f\t%f\n",root,f(root),t,acc);
+	  printf("root = %f\tf(x) = %f\n",root,f(root));
 	}
     else if(m==3)
 	{
 	  printf("Enter x:\n");
 	  scanf("%f",&x);
 	  root = newtonraphson(x);
-	  printf("root = %f\tf(x) = %f\t%f\t%f\n",root,f(root),v,acc);
+	  printf("root = %f\tf(x) = %f\n",root,f(root));
 	}          
     }
 
