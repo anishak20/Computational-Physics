@@ -1,123 +1,83 @@
-#include<stdio.h>
-#include<math.h>
+#include <stdio.h>
+#include <math.h>
 
-float acc=0.00001;
-float x1,x2,z,t,v; //global variables
-
-
-/*Function declaration*/
+// Function declarations
 float f(float x);
 float g(float x);
-float bisection(float x);
-float secant(float x);
-float newtonraphson(float x);
+float bisection(float xl, float xr, float acc);
+float secant(float x1, float x2, float acc);
+float newtonraphson(float x, float acc);
+
+void main() {
+    float x, root,root1,root2;
+    float acc = 0.00001;
 
 
-
-
-void main(){
-    float x,root,xm,f2;
-    float xinc=0.5;
-    float c=-1;
-    float d=1;
-    int n,i,m;
-
-    for(x=c;x<=d;x+=0.1){
-        printf("%f\t%f\n",x,f(x));
-
+    for (x = -1.0; x < 1.0; x += 0.5) {
+        if (f(x) * f(x + 0.5) < 0) {
+            root = bisection(x, x + 0.5, acc);
+            printf("Root from Bisection: %f\n", root);
+            root1 = secant(x, x + 0.5, acc);
+            printf("Root from Secant: %f\n", root1);
+        } 
+        root2 = newtonraphson(x, acc);
+        printf("Root from Newton Raphson: %f\n", root2);
+        
     }
-    printf("\n enter no of roots:");
-    scanf("%d",&n);
-    printf("\n Enter 1 for bisection, 2 for secant, 3 for newton raphson\n");
-    scanf("%d",&m);
-    for(i=1;i<=n;i++){
-        if(m==1){
-            printf("\n enter x1:");
-            scanf("%f",&x1);
-            printf("\n enter x2:");
-            scanf("%f",&x2);
-            for(x=x1;x<=x2;x+=xinc){
-            root=bisection(x);
-        }
-        printf("root = %f\tf(x) = %f\n",root,f(root));
-        }
-        else if(m==2)
-	{
-	   printf("\n enter x1:");
-       scanf("%f",&x1);
-       printf("\n enter x2:");
-       scanf("%f",&x2);
-	   root = secant(x);
-	  printf("root = %f\tf(x) = %f\n",root,f(root));
-	}
-    else if(m==3)
-	{
-	  printf("Enter x:\n");
-	  scanf("%f",&x);
-	  root = newtonraphson(x);
-	  printf("root = %f\tf(x) = %f\n",root,f(root));
-	}          
-    }
-
 }
-/*Function Definitions*/
-float f(float x){
-    float a=1.0;
-    float b=1.5;
-    return (exp(a*x)-(b*x*x));
 
+// Function Definitions
+float f(float x) {
+    float a = 1.0, b = 5.0;
+    return exp(a * x) - (b * x * x);
 }
-float g(float x){
-    float a=1.0;
-    float b=1.5;
-    return (a*exp(a*x)-(2*b*x));
-}
-float bisection(float x){
-    float xm,xl,xr,z;
-    float xinc=0.5;
 
-     if(f(x)*f(x+xinc)<0){
-        xl=x;
-        xr=x+xinc;
-            do{
-                xm=(xl+xr)/2.0;
-                if(f(xm)*f(xl)>0){
-                    xl=xm;
-                    }
-                else if(f(xm)*f(xl)<0){
-                    xr=xm;
-                    }
-                z=fabs((xl-xr)/(xl+xr));
-                }while(z>acc);
-            }
-            return xm;
+float g(float x) {
+    float a = 1.0, b = 5.0;
+    return a * exp(a * x) - (2 * b * x);
+}
+
+// Bisection Method
+float bisection(float xl, float xr, float acc) {
+    float xm;
+    do {
+        xm = (xl + xr) / 2.0;
+        if (f(xm) * f(xl) > 0) {
+            xl = xm;
+        } else {
+            xr = xm;
         }
-    float secant(float x){
-        float f1,f2,x3;
-        do{
-            f1=f(x1);
-            f2=f(x2);
-            x3=((x1*f2-x2*f1)/(f2-f1));
-            x1=x2;
-            x2=x3;
-            t=fabs(f2);
-        }while(t>acc);
-        return x2;
+    } while (fabs(xr - xl) > acc);
+    return xm;
+}
 
+// Secant Method
+float secant(float x1, float x2, float acc) {
+    float f1, f2, x3;
+    do {
+        f1 = f(x1);
+        f2 = f(x2);
+        if (fabs(f2 - f1) < 1e-10) {
+            return NAN;  // Return invalid root if division by zero occurs
+        }
+        x3 = (x1 * f2 - f1 * x2) / (f2 - f1);
+        x1 = x2;
+        x2 = x3;
+    } while (fabs(f(x2)) > acc);
+    return x2;
+}
 
-    }
-    float newtonraphson(float x){
-        float f3,f4;
-        float h;
-
-        do{
-            f3=f(x);
-            f4=g(x);
-            h=-f3/f4;
-            x=x+h;
-            v=fabs(h/x);
-
-        }while(v>acc);
-        return x;
-
-    }
+// Newton-Raphson Method
+float newtonraphson(float x, float acc) {
+    float h, f1, f2;
+    do {
+        f1 = f(x);
+        f2 = g(x);
+        if (fabs(f2) < 1e-10) {  // Prevent division by zero
+            return NAN;
+        }
+        h = -f1 / f2;
+        x = x + h;
+    } while (fabs(h / x) > acc);
+    return x;
+}
